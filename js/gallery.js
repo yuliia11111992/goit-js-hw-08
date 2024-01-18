@@ -84,34 +84,25 @@ for (const image of images) {
   gallery.append(galleryItem);
 }
 
-const lightboxState = {
-  lightbox: null,
-  isOpen: false,
-};
-
-gallery.addEventListener("click", (event) => {
-  event.preventDefault();
-
-  if (event.target.classList.contains("gallery-image")) {
-    const originalSrc = event.target.dataset.source;
-    lightboxState.lightbox = basicLightbox.create(`<img width="1400" height="900" src="${originalSrc}">`);
-    lightboxState.lightbox.show();
-    lightboxState.isOpen = true;
-
-    document.addEventListener("keydown", handleKeyDown);
-  }
+const lightboxState = { 
+  lightbox: null, 
+}; 
+ 
+gallery.addEventListener("click", (event) => { 
+  event.preventDefault(); 
+ 
+  if (event.target.classList.contains("gallery-image")) { 
+    const originalSrc = event.target.dataset.source; 
+    lightboxState.lightbox = basicLightbox.create(`
+      <img width="1400" height="900" src="${originalSrc}">`
+    ); 
+ 
+    lightboxState.lightbox.show(); 
+ 
+    gallery.addEventListener("keydown", (event) => { 
+      if (event.code === "Escape") { 
+        lightboxState.lightbox.close(); 
+      } 
+    }); 
+  } 
 });
-
-function handleKeyDown(event) {
-  if (lightboxState.isOpen && (event.key === "Escape" || event.code === "Escape")) {
-    closeLightbox();
-  }
-}
-
-function closeLightbox() {
-  if (lightboxState.isOpen) {
-    lightboxState.lightbox.close();
-    lightboxState.isOpen = false;
-    document.removeEventListener("keydown", handleKeyDown);
-  }
-}
