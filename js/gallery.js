@@ -84,25 +84,31 @@ for (const image of images) {
   gallery.append(galleryItem);
 }
 
-const lightboxState = { 
-  lightbox: null, 
-}; 
- 
-gallery.addEventListener("click", (event) => { 
-  event.preventDefault(); 
- 
-  if (event.target.classList.contains("gallery-image")) { 
-    const originalSrc = event.target.dataset.source; 
-    lightboxState.lightbox = basicLightbox.create(`
-      <img width="1400" height="900" src="${originalSrc}">`
-    ); 
- 
-    lightboxState.lightbox.show(); 
- 
-    gallery.addEventListener("keydown", (event) => { 
-      if (event.code === "Escape") { 
-        lightboxState.lightbox.close(); 
-      } 
-    }); 
-  } 
+document.addEventListener("click", (event) => {
+  event.preventDefault();
+
+  if (event.target.classList.contains("gallery-image")) {
+    const instance = basicLightbox.create(
+      `  <div class="modal">
+          <img src="${event.target.dataset.source}" alt="${event.target.alt}">
+      </div>
+  `,
+      {
+        onShow: (instance) => {
+          document.addEventListener("keydown", onModalClose);
+        },
+        onClose: (instance) => {
+          document.removeEventListener("keydown", onModalClose);
+        },
+      }
+    );
+
+    instance.show();
+
+    function onModalClose(event) {
+      if (event.code === "Escape") {
+        instance.close();
+      }
+    }
+  }
 });
